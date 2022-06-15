@@ -2,6 +2,8 @@ import express from "express"
 import dotenv from 'dotenv'
 import { moviesRouter } from "./routes/movies.js"
 
+import { userRouter } from "./routes/user.js"
+
 dotenv.config()
 
 const PORT = process.env.PORT
@@ -18,5 +20,8 @@ app.get("/", (req, res) => {
 
 app.use("/movies", moviesRouter)
 
+app.use("/user", userRouter)
+
 
 app.listen(PORT, () => console.log(`Server running on port: ${PORT}`))
+
