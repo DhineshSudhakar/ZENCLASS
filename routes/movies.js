@@ -1,14 +1,15 @@
 import express from "express"
 import { getAllMovies, getMovieById, createMovie, DeleteMovie, UpdateMovie } from "../helper.js"
+import { auth } from "../middlewares/auth.js"
 
 const router = express.Router()
 
-router.get("/", async (req, res) => {
+router.get("/",auth, async (req, res) => {
     const movies = await getAllMovies()
     res.send(movies)
 })
 
-router.get("/:id", async (req, res) => {
+router.get("/:id",auth, async (req, res) => {
     const {id} = req.params
     // const movie = movies.find((ele) => ele.id === id )
 
@@ -21,7 +22,7 @@ router.get("/:id", async (req, res) => {
 
 // express.json() -> inbuilt middleware
 
-router.post("/", async (req, res) => {
+router.post("/",auth, async (req, res) => {
     const data = req.body
     console.log(data)
 
@@ -32,7 +33,7 @@ router.post("/", async (req, res) => {
 })
 
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
     const {id} = req.params
 
     const movie = await DeleteMovie(id)
@@ -40,7 +41,7 @@ router.delete("/:id", async (req, res) => {
     movie.deletedCount > 0 ? res.send(movie) : res.status(404).send({msg: "No such movie"})
 })
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
     const {id} = req.params
     const data = req.body
     const movie = await UpdateMovie(id, data)

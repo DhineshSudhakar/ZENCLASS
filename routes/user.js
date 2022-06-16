@@ -1,5 +1,6 @@
 import express from "express"
 import bcrypt, { hash } from "bcrypt"
+import jwt from "jsonwebtoken"
 
 import { createUser, getUserByName } from "../helper.js"
 
@@ -26,6 +27,26 @@ router.post("/signup", async (req, res) => {
         res.send(result)
     }else{
         res.status(400).send({msg: "User already exists"}) 
+    }
+ 
+})
+
+router.post("/login", async (req, res) => {
+    const {username, password} = req.body
+    const isUserExist = await getUserByName(username)
+
+    if(!isUserExist){
+        res.status(401).send({msg: "Invalid credentials"})
+    }else{
+        const storedPassword = isUserExist.password
+        const isPasswordsMatch = await bcrypt.compare(password, storedPassword)
+        console.log(isPasswordsMatch)
+        if(isPasswordsMatch){
+            const token = jwt.sign({id: isUserExist._id}, process.env.ACCESS_TOKEN_SECRET)
+            res.send({msg: "Login successful", token})
+        }else{
+            res.status(401).send({msg: "Invalid credentials"})
+        }
     }
  
 })
